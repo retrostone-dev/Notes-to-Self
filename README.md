@@ -38,9 +38,9 @@ My distribution will set it to RGB565, which is value 10, not 4 as reported by t
 <br></br>
 I also need to support HDMI output but this might not be easy given the odd resolution...
 It's not a priority though, i'm focusing on getting something to work over the LCD.
-
+<br></br>
 <b>3D Acceleration</b>
-
+<br></br>
 Mali userspace blobs are built against glibc as i said above.
 It's possible to use the mainline kernel and rebuild mesa with the soon-to-be-merged lima driver but
 mainline kernel does not support CVBS so we're out of luck.
@@ -64,3 +64,12 @@ RetrOrangePi handles input by creating a virtual device with uinput, and it does
 We want to do something like this but :
 - Make it C instead as to avoid a dependency on python.
 - Map it as a virtual keyboard to allow OpenDingux ports.
+<br></br>
+<b>Userspace</b>
+<br></br>
+Using directly fbdev works fine but for some reasons, SDL refuses to display properly over fbdev.
+I suspect this may have to do with the allocated framebuffer, as that can cause issues on the old DRM driver.
+(as i've seen with my FBDEV example)
+
+Looks like SDL will require a patch to force it to 16bpp among other useful things like ASYNC blitting (useful on our 4 cores),
+ANYFORMAT as to ignore the screen's depth etc...
