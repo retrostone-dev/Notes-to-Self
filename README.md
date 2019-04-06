@@ -64,6 +64,7 @@ RetrOrangePi handles input by creating a virtual device with uinput, and it does
 We want to do something like this but :
 - Make it C instead as to avoid a dependency on python.
 - Map it as a virtual keyboard to allow OpenDingux ports.
+
 <br></br>
 <b>Userspace</b>
 <br></br>
