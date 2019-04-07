@@ -26,7 +26,7 @@ i can't use glibc).
 <br></br>
 RetrOrangePi sets the resolution to 672x448.
 However, this is not actually the maxed out resolution you can get without black borders.
-The maximum resolution i could get is 680x448. Offsets are x: 33 and y : 18.
+The maximum resolution i could get is 680x448. Offsets are x: 40 and y : 18.
 <br></br>
 There are two displays opened, first one is the one we draw to (where the resolution is actually set)
 and the second one, which seemingly refuses to change its resolution over composite, is for the final output.
