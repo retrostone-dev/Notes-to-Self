@@ -61,9 +61,10 @@ TODO : Look at whenever it actually checks my .asoundrc/asound.conf files...
  <b>Input</b>
  
 RetrOrangePi handles input by creating a virtual device with uinput, and it does this through a python script.
-We want to do something like this but :
-- Make it C instead as to avoid a dependency on python.
-- Map it as a virtual keyboard to allow OpenDingux ports.
+I did something similar but in C : https://github.com/retrostone-dev/remap-input
+The program maps the GPIO keys as a virtual keyboard, especially to allow OpenDingux ports.
+
+The only issue left is the fact that such keys won't work on ttys and as such, it won't work on SDL 1.2. :/
 
 <br></br>
 <b>Userspace</b>
