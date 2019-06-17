@@ -13,7 +13,8 @@ The Retrostone's LCD is plugged over composite and thus, we are stuck with Legac
 
 The legacy kernel has a few (a lot) of issues :
 - The sound driver is completely awful, constantly underruns and sometimes outputs no sound.
-I don't know how to fix this...
+It doesn't seem to support resampling either so we are stuck with one frequency.
+I chose 48000hz stereo.
 - While the DRM mali module works, it requires a proprietary firmware blobs, which has a dependency
 on glibc. This makes it problematic if we insist on using uclibc or musl (see buildroot on why
 i can't use glibc).
@@ -36,8 +37,8 @@ RetrOrangePi sets the bitdepth to 32, which is too high for this device and also
 as easily.
 My distribution will set it to RGB565, which is value 10, not 4 as reported by the Sunxi wiki...
 <br></br>
-I also need to support HDMI output but this might not be easy given the odd resolution...
-It's not a priority though, i'm focusing on getting something to work over the LCD.
+Emulators don't manually set the resolution so it's somewhat flexible but i still
+need to figure out how to use the HDMI out.
 <br></br>
 <b>3D Acceleration</b>
 <br></br>
@@ -51,27 +52,21 @@ For now, we will do without 3D acceleration (and just using the DRM interface), 
 
 <b>Sound</b>
 
-The sound driver is garbage : It constantly underruns, sometimes outright refusing to output any sound.
+The sound driver is garbage : It constantly underruns, sometimes outright refusing to output any sound and doesn't support resampling of differing frequencies.
 I heard that mainline has a more robust implementation but again, no luck for us here...
+I chose 48000hz stereo as the default and emulators target that.
 
-TODO : Look at whenever it actually checks my .asoundrc/asound.conf files...
- cat /proc/asound/card1/pcm0p/sub0/hw_params
- cat /proc/asound/card0/pcm0p/sub0/hw_params
- 
  <b>Input</b>
  
 RetrOrangePi handles input by creating a virtual device with uinput, and it does this through a python script.
 I did something similar but in C : https://github.com/retrostone-dev/remap-input
 The program maps the GPIO keys as a virtual keyboard, especially to allow OpenDingux ports.
 
-The only issue left is the fact that such keys won't work on ttys and as such, it won't work on SDL 1.2. :/
+However, i ended up directly patching SDL in order to avoid more input latency by directly reading from the GPIO pins.
+The difference is quite noticeable btw.
 
 <br></br>
 <b>Userspace</b>
 <br></br>
-Using directly fbdev works fine but for some reasons, SDL refuses to display properly over fbdev.
-I suspect this may have to do with the allocated framebuffer, as that can cause issues on the old DRM driver.
-(as i've seen with my FBDEV example)
-
-Looks like SDL will require a patch to force it to 16bpp among other useful things like ASYNC blitting (useful on our 4 cores),
-ANYFORMAT as to ignore the screen's depth etc...
+Because we are using an odd resolution, we need to export an environment variable to tell SDL to accept it as it is.
+Otherwise it will refuse to display anything.
